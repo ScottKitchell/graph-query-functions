@@ -1,0 +1,21 @@
+{
+  "name": "graph-query-functions",
+  "version": "1.0.0",
+  "main": "./src/index.ts",
+  "repository": "https://github.com/ScottKitchell/graph-query-functions.git",
+  "author": "Scott Kitchell <s.kitchell@live.com>",
+  "license": "MIT",
+  "private": false,
+  "devDependencies": {
+    "@typescript-eslint/eslint-plugin": "^4.1.0",
+    "@typescript-eslint/parser": "^4.1.0",
+    "eslint": "^7.9.0",
+    "eslint-config-prettier": "^6.11.0",
+    "eslint-plugin-prettier": "^3.1.0",
+    "prettier": "^2.0.0",
+    "typescript": "^4.0.0"
+  },
+  "dependencies": {
+    "graphql": "^15.3.0"
+  }
+}
