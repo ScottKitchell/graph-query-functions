@@ -1,14 +1,14 @@
 # 🛸 Graph Query Functions
 
-A `gql` tag equivalent for TypeScript without the query language bloat.
+A `gql` tag equivalent for [TypeScript](https://github.com/microsoft/TypeScript) without the query language bloat.
 
 > ! work in progress (maybe) !
 
 ## How is it different?
 
-This is a query using **Graph Query Language**.
+This is a query using **Graph Query Language** (GQL).
 ```ts
-const GetDogPhoto = gql`
+const GetDogs = gql`
   query Dog($breed: String!) {
     dogs(breed: $breed) {
       id
@@ -19,11 +19,11 @@ const GetDogPhoto = gql`
 ```
 
 To get syntax highlighting, autocompletion, and linting for this `gql` tag you need to install
-various extensions in your editor. *Sounds similar to what TypeScript does already does...*
+various extensions in your editor. **But why** when TypeScript can already do this for us?
 
-This is the same query using **Graph Query Functions**.
+This is the same query using **Graph Query Functions** (GQF).
 ```ts
-const GetDogPhoto = gqf((bread: string) => query({
+const GetDogs = gqf((bread: string) => query({
   dogs: {
     with: { breed },
     id: 1,
@@ -32,12 +32,15 @@ const GetDogPhoto = gqf((bread: string) => query({
 }))
 ```
 
-Both output a `DocumentNode` when evaluated and be used with popular tools like Apollo.
+Hopefully the standard js syntax isn't as alien to you as GQL either!
+
+Just like `gql`, `gqf` also outputs a `DocumentNode` and so can be used with popular gql libraries 
+like Apollo.
 
 ```ts
-const { data, loading, error } = useQuery(GetDogPhoto)
+const { data, loading, error } = useQuery(GetDogs, { variables: { breed: 'spoodle' }})
 
-data?.dogs // [{id: 1, name: Fergus}, {id: 2, name: Louie}]
+data?.dogs // [{id: 1, name: 'Fergus'}, {id: 2, name: 'Louie'}]
 ```
 
 
@@ -50,11 +53,32 @@ import { gqf, query, mutation, subscription, fragment } from 'graph-query-functi
 
 ### Query
 ```ts 
-const GetDog = gqf((bread: string) = query({
+const GetDogs = gqf((bread: string) = query({
   dogs: {
     with: { breed },
     id: 1,
     name: 1,
+    owner: {
+      id: 1,
+      name: 1,
+    }
+  }
+}))
+```
+
+You might have noticed the `1`s. These values control whether to include the field of not. They don't have to be `1`, they could be `true`, `false`, `0` or any value that converts to a boolean. 
+
+For example:
+```ts
+const GetDog = gqf((id: number, includeOwner: boolean) = query({
+  dog: {
+    with: { id },
+    id: 1,
+    name: 1,
+    owner: includeOwner && {
+      id: 1,
+      firstName: 1,
+    },
   }
 }))
 ```
@@ -74,7 +98,7 @@ const AddDog = gqf((name: string, breed: string) => mutation({
 ### Subscription
 ```ts
 const OnDogAdded = gqf((breed: string) => subscription({
-  dogs: {
+  dog: {
     with: { breed },
     id: 1,
     name: 1,
@@ -90,11 +114,11 @@ const Names = gqf(() = fragment({
   }
 }))
 
-const GetUser = gqf((id: number) = query({
-  user: {
+const GetOwner = gqf((id: number) = query({
+  owner: {
     with: { id },
     id: 1,
-    ...Names
+    ...Names,
   }
 }))
 ```
